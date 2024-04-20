@@ -42,7 +42,7 @@ router.post('/register',(request,response)=>{
 
 
 // login user route
-router.get('/login',(request,response)=>{
+router.post('/login',(request,response)=>{
 
     // object destructuring
     const {email,password} = request.body
@@ -101,6 +101,26 @@ router.get('/login',(request,response)=>{
             }
         }
     )
+})
+
+// my blog route
+router.get('/my-blog',(request,response)=>{
+    const user_id = request.userId 
+
+    // sql statement 
+    const statement = `select b.id, b.title, c.title, b.created_time, u.full_name from user u, category c, blogs b
+        where b.category_id = c.id and u.id = ?;`
+    
+    // execute query
+    db.pool.query(statement,[user_id],(error,result)=>{
+        if(error)
+        {
+            response.send(utils.createErrorResult(error))
+        }
+        else{
+            response.send(utils.createSuccessResult(result))
+        }
+    })
 })
 
 
